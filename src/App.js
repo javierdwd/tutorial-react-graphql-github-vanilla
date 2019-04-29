@@ -2,7 +2,7 @@ import { GITHUB_ACCESS_TOKEN } from './data';
 import React from 'react';
 import axios from  'axios';
 
-import { GET_ORGANIZATION } from './Query';
+import { GET_ISSUES_OF_REPOSITORY } from './Query';
 import Form from './components/Form';
 import Organization from './components/Organization';
 
@@ -39,13 +39,14 @@ class App extends React.Component {
   onFetchFromGitHub = async () => {
     try {
       const result = await axiosGitHubGraphQL.post('', {
-        query: GET_ORGANIZATION
+        query: GET_ISSUES_OF_REPOSITORY
       });
 
-      this.setState({
-        organization: result.data.data.organization,
-        errors: result.data.errors
-      });
+      this.setState({errors: result.data.errors});
+
+      if(!this.state.errors) {
+        this.setState({ organization: result.data.data.organization })
+      }
     } catch (error) {
       console.log(error);
     }
