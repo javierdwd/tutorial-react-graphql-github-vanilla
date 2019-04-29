@@ -12,3 +12,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+#root {
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+#root > div {
+  max-width: 860px;
+}
+form button {
+  margin-left: .4rem;
+}
+form input[type="text"] {
+  background-color: #C9C9C9;
+  border: 0;
+  color: #333;
+  line-height: 1.4rem;
+  margin-left: .2rem;
+  padding: 0 .6rem;
+}
