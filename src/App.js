@@ -38,7 +38,7 @@ class App extends React.Component {
     });
   };
 
-  onFetchFromGitHub = async path => {
+  onFetchFromGitHub = async (path, cursor) => {
     const [organization, repository] = path.split('/');
 
     try {
@@ -46,7 +46,8 @@ class App extends React.Component {
         query: GET_ISSUES_OF_REPOSITORY,
         variables: {
           organization,
-          repository
+          repository,
+          cursor
         }
       });
 
@@ -65,6 +66,14 @@ class App extends React.Component {
     }
   };
 
+  onFetchMoreIssues = () => {
+    const {
+      endCursor,
+    } = this.state.organization.repository.issues.pageInfo;
+
+    this.onFetchFromGitHub(this.state.path, endCursor);
+  };
+
   render() {
     const { path, organization, errors } = this.state;
 
@@ -81,7 +90,11 @@ class App extends React.Component {
         <hr />
 
         {organization || errors ? (
-          <Organization organization={organization} errors={errors} />
+          <Organization
+            organization={organization}
+            errors={errors}
+            onFetchMoreIssues={this.onFetchMoreIssues}
+          />
         ) : (
           <p>Cargando información...</p>
         )}

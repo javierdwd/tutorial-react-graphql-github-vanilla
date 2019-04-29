@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Repository = ({ repository }) => (
+const Repository = ({ repository, onFetchMoreIssues }) => (
   <div>
     <p>
       <strong>In Repository: </strong>
@@ -38,6 +38,10 @@ const Repository = ({ repository }) => (
         </li>
       ))}
     </ul>
+
+    <hr/>
+
+    <button onClick={onFetchMoreIssues}>More</button>
   </div>
 );
 
