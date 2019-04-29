@@ -27,6 +27,14 @@ const Repository = ({ repository }) => (
           >
             {issue.node.author.login}
           </a>
+
+          { issue.node.reactions.edges.length &&
+            <ul>
+              {issue.node.reactions.edges.map(reaction => (
+                <li key={reaction.node.id}><small>{reaction.node.content}</small></li>
+              ))}
+            </ul>
+          }
         </li>
       ))}
     </ul>

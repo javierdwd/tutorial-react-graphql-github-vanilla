@@ -28,7 +28,7 @@ export const GET_ISSUES_OF_REPOSITORY  = `
       repository(name: $repository) {
         name,
         url,
-        issues(last: 5) {
+        issues(last: 5, states: [OPEN]) {
           edges {
             node {
               id,
@@ -38,6 +38,14 @@ export const GET_ISSUES_OF_REPOSITORY  = `
               author {
                 login,
                 url
+              },
+              reactions(last: 3) {
+                edges {
+                  node {
+                    id,
+                    content
+                  }
+                }
               }
             }
           }
