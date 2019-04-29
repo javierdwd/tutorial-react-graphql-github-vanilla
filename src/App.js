@@ -1,19 +1,23 @@
-import { GITHUB_ACCESS_TOKEN } from './data';
 import React from 'react';
-import axios from  'axios';
 
-import { GET_ISSUES_OF_REPOSITORY } from './Query';
 import Form from './components/Form';
 import Organization from './components/Organization';
-
-const axiosGitHubGraphQL = axios.create({
-  baseURL: 'https://api.github.com/graphql',
-  headers: {
-    Authorization: `bearer ${GITHUB_ACCESS_TOKEN}`,
-  },
-});
+import { getIssuesOfRepository } from './api';
 
 const TITLE = 'React GraphQL Github Client';
+
+const resolveIssuesQuery = queryResult => {
+  const update = {
+    errors: queryResult.data.errors,
+    organization: null
+  };
+
+  if(!update.errors) {
+    update.organization = queryResult.data.data.organization;
+  }
+
+  return update;
+};
 
 class App extends React.Component {
   state = {
@@ -39,28 +43,10 @@ class App extends React.Component {
   };
 
   onFetchFromGitHub = async (path, cursor) => {
-    const [organization, repository] = path.split('/');
-
     try {
-      const result = await axiosGitHubGraphQL.post('', {
-        query: GET_ISSUES_OF_REPOSITORY,
-        variables: {
-          organization,
-          repository,
-          cursor
-        }
-      });
+      const queryResult = await getIssuesOfRepository(path, cursor);
 
-      const update = {
-        errors: result.data.errors,
-        organization: null
-      };
-
-      if(!update.errors) {
-        update.organization = result.data.data.organization;
-      }
-
-      this.setState(update);
+      this.setState(await resolveIssuesQuery(queryResult));
     } catch (error) {
       console.log(error);
     }
