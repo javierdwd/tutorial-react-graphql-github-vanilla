@@ -6,15 +6,42 @@ import { getIssuesOfRepository } from './api';
 
 const TITLE = 'React GraphQL Github Client';
 
-const resolveIssuesQuery = queryResult => {
+const resolveIssuesQuery = (queryResult, cursor) => state => {
+  const { data, errors } = queryResult.data;
+
   const update = {
-    errors: queryResult.data.errors,
+    errors: errors,
     organization: null
   };
 
   if(!update.errors) {
-    update.organization = queryResult.data.data.organization;
+    update.organization = data.organization;
   }
+
+  if(!cursor) {
+    return update;
+  }
+
+  const { edges: oldIssues} = state.organization.repository.issues;
+  const { edges: newIssues } = data.organization.repository.issues;
+
+  const updatedIssues = [...oldIssues, ...newIssues];
+
+  update.organization.repository.issues.edges = updatedIssues;
+
+  // return {
+  //   organization: {
+  //     ...data.organization,
+  //     repository: {
+  //       ...data.organization.repository,
+  //       issues: {
+  //         ...data.organization.repository.issues,
+  //         edges: updatedIssues,
+  //       },
+  //     },
+  //   },
+  //   errors,
+  // };
 
   return update;
 };
@@ -46,7 +73,7 @@ class App extends React.Component {
     try {
       const queryResult = await getIssuesOfRepository(path, cursor);
 
-      this.setState(await resolveIssuesQuery(queryResult));
+      this.setState(await resolveIssuesQuery(queryResult, cursor));
     } catch (error) {
       console.log(error);
     }

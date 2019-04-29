@@ -39,9 +39,14 @@ const Repository = ({ repository, onFetchMoreIssues }) => (
       ))}
     </ul>
 
-    <hr/>
-
-    <button onClick={onFetchMoreIssues}>More</button>
+      {
+        repository.issues.pageInfo.hasNextPage && (
+        <div>
+          <hr />
+          <button onClick={onFetchMoreIssues}>More</button>
+        </div>
+        )
+      }
   </div>
 );
 
