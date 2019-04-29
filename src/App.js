@@ -23,11 +23,13 @@ class App extends React.Component {
   };
 
   componentDidMount = () => {
-    this.onFetchFromGitHub();
+    this.onFetchFromGitHub(this.state.path);
   };
 
-  handleFormSubmit = () => {
+  handleFormSubmit = event => {
+    this.onFetchFromGitHub(this.state.path);
 
+    event.preventDefault();
   };
 
   handleFormChange = event => {
@@ -36,10 +38,16 @@ class App extends React.Component {
     });
   };
 
-  onFetchFromGitHub = async () => {
+  onFetchFromGitHub = async path => {
+    const [organization, repository] = path.split('/');
+
     try {
       const result = await axiosGitHubGraphQL.post('', {
-        query: GET_ISSUES_OF_REPOSITORY
+        query: GET_ISSUES_OF_REPOSITORY,
+        variables: {
+          organization,
+          repository
+        }
       });
 
       this.setState({errors: result.data.errors});
