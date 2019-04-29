@@ -52,7 +52,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { path, organization } = this.state;
+    const { path, organization, errors } = this.state;
 
     return (
       <div>
@@ -66,8 +66,8 @@ class App extends React.Component {
 
         <hr />
 
-        {organization ? (
-          <Organization organization={organization} />
+        {organization || errors ? (
+          <Organization organization={organization} errors={errors} />
         ) : (
           <p>Cargando información...</p>
         )}
