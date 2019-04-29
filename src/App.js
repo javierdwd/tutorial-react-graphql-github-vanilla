@@ -2,7 +2,9 @@ import { GITHUB_ACCESS_TOKEN } from './data';
 import React from 'react';
 import axios from  'axios';
 
+import { GET_ORGANIZATION } from './Query';
 import Form from './components/Form';
+import Organization from './components/Organization';
 
 const axiosGitHubGraphQL = axios.create({
   baseURL: 'https://api.github.com/graphql',
@@ -16,10 +18,12 @@ const TITLE = 'React GraphQL Github Client';
 class App extends React.Component {
   state = {
     path: 'the-road-to-learn-react/the-road-to-learn-react',
+    organization: null,
+    errors: null,
   };
 
   componentDidMount = () => {
-
+    this.onFetchFromGitHub();
   };
 
   handleFormSubmit = () => {
@@ -32,8 +36,23 @@ class App extends React.Component {
     });
   };
 
+  onFetchFromGitHub = async () => {
+    try {
+      const result = await axiosGitHubGraphQL.post('', {
+        query: GET_ORGANIZATION
+      });
+
+      this.setState({
+        organization: result.data.data.organization,
+        errors: result.data.errors
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
-    const { path } = this.state;
+    const { path, organization } = this.state;
 
     return (
       <div>
@@ -46,6 +65,12 @@ class App extends React.Component {
         />
 
         <hr />
+
+        {organization ? (
+          <Organization organization={organization} />
+        ) : (
+          <p>Cargando información...</p>
+        )}
       </div>
     )
   }
