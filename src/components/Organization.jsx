@@ -22,9 +22,13 @@ const Organization = ({ organization, errors }) => {
         >{organization.name}</a>
       </p>
 
-      <Repository repository={organization.repository} />
+      { organization.repository ? (
+        <Repository repository={organization.repository} />
+      ) : (
+        <em>No repository</em>
+      )}
     </div>
-  )
+  );
 };
 
 export default Organization;
