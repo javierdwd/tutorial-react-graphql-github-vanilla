@@ -33,7 +33,12 @@ export const GET_ISSUES_OF_REPOSITORY  = `
             node {
               id,
               title,
-              url
+              url,
+              state,
+              author {
+                login,
+                url
+              }
             }
           }
         }

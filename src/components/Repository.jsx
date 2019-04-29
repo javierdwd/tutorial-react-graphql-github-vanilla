@@ -14,7 +14,19 @@ const Repository = ({ repository }) => (
             href={issue.node.url}
             target="_blank"
             rel="noopener noreferrer"
-          >{issue.node.title}</a>
+          >
+            {issue.node.title} is <em>{ issue.node.state }</em>
+          </a>
+
+          &middot; Author:&nbsp;
+
+          <a
+            href={issue.node.author.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {issue.node.author.login}
+          </a>
         </li>
       ))}
     </ul>

@@ -50,11 +50,13 @@ class App extends React.Component {
         }
       });
 
-      this.setState({errors: result.data.errors});
+      const update = { errors: result.data.errors };
 
       if(!this.state.errors) {
-        this.setState({ organization: result.data.data.organization })
+        update.organization = result.data.data.organization;
       }
+
+      this.setState(update);
     } catch (error) {
       console.log(error);
     }
