@@ -29,20 +29,6 @@ const resolveIssuesQuery = (queryResult, cursor) => state => {
 
   update.organization.repository.issues.edges = updatedIssues;
 
-  // return {
-  //   organization: {
-  //     ...data.organization,
-  //     repository: {
-  //       ...data.organization.repository,
-  //       issues: {
-  //         ...data.organization.repository.issues,
-  //         edges: updatedIssues,
-  //       },
-  //     },
-  //   },
-  //   errors,
-  // };
-
   return update;
 };
 
