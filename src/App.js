@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer, useEffect } from 'react';
 
 import Form from './components/Form';
 import Organization from './components/Organization';
@@ -32,74 +32,75 @@ const resolveIssuesQuery = (queryResult, cursor) => state => {
   return update;
 };
 
-class App extends React.Component {
-  state = {
+const stateReducer = (state, newState) => ({
+  ...state,
+  ...newState
+});
+
+const App = () => {
+  const [state, setState] = useReducer(stateReducer, {
     path: 'the-road-to-learn-react/the-road-to-learn-react',
     organization: null,
-    errors: null,
-  };
+    errors: null
+  });
 
-  componentDidMount = () => {
-    this.onFetchFromGitHub(this.state.path);
-  };
-
-  handleFormSubmit = event => {
-    this.onFetchFromGitHub(this.state.path);
-
-    event.preventDefault();
-  };
-
-  handleFormChange = event => {
-    this.setState({
-      path: event.target.value
-    });
-  };
-
-  onFetchFromGitHub = async (path, cursor) => {
+  const onFetchFromGitHub = async (path, cursor) => {
     try {
       const queryResult = await getIssuesOfRepository(path, cursor);
 
-      this.setState(await resolveIssuesQuery(queryResult, cursor));
+      setState(await resolveIssuesQuery(queryResult, cursor)(state));
     } catch (error) {
       console.log(error);
     }
   };
 
-  onFetchMoreIssues = () => {
-    const {
-      endCursor,
-    } = this.state.organization.repository.issues.pageInfo;
+  const handleFormSubmit = event => {
+    onFetchFromGitHub(state.path);
 
-    this.onFetchFromGitHub(this.state.path, endCursor);
+    event.preventDefault();
   };
 
-  render() {
-    const { path, organization, errors } = this.state;
+  const handleFormChange = event => {
+    setState({
+      path: event.target.value
+    });
+  };
 
-    return (
-      <div>
-        <h1>{ TITLE }</h1>
+  const onFetchMoreIssues = () => {
+    const {
+      endCursor,
+    } = state.organization.repository.issues.pageInfo;
 
-        <Form
-          onSubmit={this.handleFormSubmit}
-          onChange={this.handleFormChange}
-          value={path}
+    onFetchFromGitHub(state.path, endCursor);
+  };
+
+  useEffect(() => {
+    onFetchFromGitHub(state.path);
+  }, []);
+
+  return (
+    <div>
+      <h1>{ TITLE }</h1>
+
+      <Form
+        onSubmit={handleFormSubmit}
+        onChange={handleFormChange}
+        value={state.path}
+      />
+
+      <hr />
+
+      {state.organization || state.errors ? (
+        <Organization
+          organization={state.organization}
+          errors={state.errors}
+          onFetchMoreIssues={onFetchMoreIssues}
         />
-
-        <hr />
-
-        {organization || errors ? (
-          <Organization
-            organization={organization}
-            errors={errors}
-            onFetchMoreIssues={this.onFetchMoreIssues}
-          />
-        ) : (
-          <p>Cargando información...</p>
-        )}
-      </div>
-    )
-  }
-}
+      ) : (
+        <p>Cargando información...</p>
+      )}
+    </div>
+  );
+};
 
 export default App;
